@@ -327,6 +327,16 @@ i := playvideo.Int(42)
 f := playvideo.Float64(3.14)
 ```
 
+## MCP Server
+
+Use the PlayVideo MCP server to connect Claude/Desktop assistants to your account.
+
+```bash
+npm install -g @playvideo/playvideo-mcp
+```
+
+Repo: https://github.com/PlayVideo-dev/playvideo-mcp
+
 ## Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
