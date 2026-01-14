@@ -16,6 +16,11 @@ func newTestServer(t *testing.T, handler http.HandlerFunc) (*httptest.Server, *C
 	return server, client
 }
 
+// Helper to encode JSON responses in tests
+func writeJSON(w http.ResponseWriter, v interface{}) {
+	_ = writeJSON(w, v)
+}
+
 func TestClientInitialization(t *testing.T) {
 	t.Run("creates client with API key", func(t *testing.T) {
 		client := NewClient("play_test_xxx")
@@ -54,7 +59,7 @@ func TestCollections(t *testing.T) {
 				t.Error("expected Authorization header")
 			}
 
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"collections": []map[string]interface{}{
 					{
 						"id":          "col1",
@@ -88,7 +93,7 @@ func TestCollections(t *testing.T) {
 				t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
 			}
 
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"id":        "col1",
 				"name":      "My Videos",
 				"slug":      "my-videos",
@@ -117,7 +122,7 @@ func TestCollections(t *testing.T) {
 				t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
 			}
 
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"id":        "col1",
 				"name":      "Test",
 				"slug":      "test",
@@ -143,7 +148,7 @@ func TestCollections(t *testing.T) {
 				t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
 			}
 
-			json.NewEncoder(w).Encode(map[string]string{"message": "Deleted"})
+			writeJSON(w, map[string]string{"message": "Deleted"})
 		})
 		defer server.Close()
 
@@ -161,7 +166,7 @@ func TestVideos(t *testing.T) {
 				t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
 			}
 
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"videos": []map[string]interface{}{
 					{
 						"id":        "vid1",
@@ -193,7 +198,7 @@ func TestVideos(t *testing.T) {
 				t.Error("expected status param")
 			}
 
-			json.NewEncoder(w).Encode(map[string]interface{}{"videos": []interface{}{}})
+			writeJSON(w, map[string]interface{}{"videos": []interface{}{}})
 		})
 		defer server.Close()
 
@@ -213,7 +218,7 @@ func TestVideos(t *testing.T) {
 				t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
 			}
 
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"id":          "vid1",
 				"filename":    "test.mp4",
 				"status":      "COMPLETED",
@@ -242,7 +247,7 @@ func TestVideos(t *testing.T) {
 				t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
 			}
 
-			json.NewEncoder(w).Encode(map[string]string{"message": "Deleted"})
+			writeJSON(w, map[string]string{"message": "Deleted"})
 		})
 		defer server.Close()
 
@@ -258,7 +263,7 @@ func TestVideos(t *testing.T) {
 				t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
 			}
 
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"videoId":   "vid1",
 				"signature": "sig123",
 				"embedPath": "/embed/vid1",
@@ -282,7 +287,7 @@ func TestVideos(t *testing.T) {
 func TestWebhooks(t *testing.T) {
 	t.Run("list webhooks", func(t *testing.T) {
 		server, client := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"webhooks": []map[string]interface{}{
 					{
 						"id":        "wh1",
@@ -309,7 +314,7 @@ func TestWebhooks(t *testing.T) {
 
 	t.Run("create webhook", func(t *testing.T) {
 		server, client := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"message": "Webhook created",
 				"webhook": map[string]interface{}{
 					"id":        "wh1",
@@ -340,7 +345,7 @@ func TestWebhooks(t *testing.T) {
 func TestEmbed(t *testing.T) {
 	t.Run("get settings", func(t *testing.T) {
 		server, client := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"allowedDomains": []string{"example.com"},
 				"allowLocalhost": true,
 				"primaryColor":   "#FF0000",
@@ -359,7 +364,7 @@ func TestEmbed(t *testing.T) {
 
 	t.Run("sign embed", func(t *testing.T) {
 		server, client := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"videoId":   "vid1",
 				"signature": "sig123",
 				"embedUrl":  "https://embed.playvideo.dev/vid1",
@@ -384,7 +389,7 @@ func TestEmbed(t *testing.T) {
 func TestAPIKeys(t *testing.T) {
 	t.Run("list api keys", func(t *testing.T) {
 		server, client := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"apiKeys": []map[string]interface{}{
 					{
 						"id":        "key1",
@@ -408,7 +413,7 @@ func TestAPIKeys(t *testing.T) {
 
 	t.Run("create api key", func(t *testing.T) {
 		server, client := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"message": "API key created",
 				"apiKey": map[string]interface{}{
 					"id":        "key1",
@@ -434,7 +439,7 @@ func TestAPIKeys(t *testing.T) {
 func TestAccount(t *testing.T) {
 	t.Run("get account", func(t *testing.T) {
 		server, client := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"id":        "acc1",
 				"email":     "user@example.com",
 				"plan":      "PRO",
@@ -459,7 +464,7 @@ func TestAccount(t *testing.T) {
 func TestUsage(t *testing.T) {
 	t.Run("get usage", func(t *testing.T) {
 		server, client := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSON(w, map[string]interface{}{
 				"plan": "PRO",
 				"usage": map[string]interface{}{
 					"videosThisMonth": 50,
