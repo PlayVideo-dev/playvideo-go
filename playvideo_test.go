@@ -18,7 +18,7 @@ func newTestServer(t *testing.T, handler http.HandlerFunc) (*httptest.Server, *C
 
 // Helper to encode JSON responses in tests
 func writeJSON(w http.ResponseWriter, v interface{}) {
-	_ = writeJSON(w, v)
+	_ = json.NewEncoder(w).Encode(v)
 }
 
 func TestClientInitialization(t *testing.T) {
